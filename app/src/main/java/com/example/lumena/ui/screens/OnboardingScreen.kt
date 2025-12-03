@@ -40,10 +40,12 @@ import com.example.lumena.viewmodel.OnboardingViewModelFactory
 
 // Opt-in for experimental FlowRow API
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import com.example.lumena.data.onboarding.OnboardingRepository
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OnboardingScreen(
+    repo: OnboardingRepository,
     onContinue: () -> Unit
 ) {
     // create prefs & repo only once per composition
@@ -53,7 +55,7 @@ fun OnboardingScreen(
     val factory = remember { OnboardingViewModelFactory(repo) }
 
     // obtain the ViewModel with the factory so it can receive the repo in its constructor
-    val viewModel: OnboardingViewModel = viewModel(factory = factory)
+    val viewModel: OnboardingViewModel = viewModel(factory = OnboardingViewModelFactory(repo))
 
     val uiState by viewModel.uiState.collectAsState()
 
