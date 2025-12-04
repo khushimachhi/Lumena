@@ -27,6 +27,10 @@ fun HomeScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.refreshTodayMood()
+    }
+
     if (uiState.loading) {
         Box(
             modifier = Modifier.fillMaxSize(),

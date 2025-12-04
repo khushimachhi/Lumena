@@ -30,10 +30,11 @@ class HomeViewModel(
     private val todayIso = LocalDate.now().toString()
 
     init {
-        loadData()
+        observeOnboarding()
+        refreshTodayMood()   // initial load
     }
 
-    private fun loadData() {
+    private fun observeOnboarding() {
         viewModelScope.launch {
             combine(
                 onboardingRepo.getNickname(),
@@ -41,20 +42,28 @@ class HomeViewModel(
             ) { nickname, persona ->
                 nickname to persona
             }.collect { (nickname, persona) ->
-
-                val entry = moodRepo.getEntryForDate(todayIso)
-
-                _uiState.value = HomeUiState(
+                _uiState.value = _uiState.value.copy(
                     nickname = nickname,
-                    persona = persona,
-                    todayMood = entry?.mood,
-                    todayEnergy = entry?.energy,
-                    loading = false
+                    persona = persona
                 )
             }
         }
     }
+
+    /** 🔥 Call this anytime HomeScreen becomes visible */
+    fun refreshTodayMood() {
+        viewModelScope.launch {
+            val entry = moodRepo.getEntryForDate(todayIso)
+
+            _uiState.value = _uiState.value.copy(
+                todayMood = entry?.mood,
+                todayEnergy = entry?.energy,
+                loading = false
+            )
+        }
+    }
 }
+
 
 class HomeViewModelFactory(
     private val onboardingRepo: OnboardingRepository,

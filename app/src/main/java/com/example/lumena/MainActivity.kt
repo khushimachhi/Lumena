@@ -11,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lumena.ui.theme.LumenaTheme
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,6 +28,8 @@ import com.example.lumena.ui.screens.HomeScreen
 import com.example.lumena.ui.screens.OnboardingScreen
 import com.example.lumena.ui.screens.ToolsScreen
 import com.example.lumena.ui.screens.TrendsScreen
+import com.example.lumena.viewmodel.CheckInViewModel
+import com.example.lumena.viewmodel.CheckInViewModelFactory
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -93,13 +96,17 @@ fun LumenaApp() {
 
     }
 
-        composable("checkin") {
-            // Pass moodRepo to CheckInScreen
+        composable("checkin") { backStackEntry ->
+            val viewModel: CheckInViewModel = viewModel(
+                backStackEntry,
+                factory = CheckInViewModelFactory(moodRepo)
+            )
             CheckInScreen(
-                moodRepo = moodRepo,
+                viewModel = viewModel,
                 onBack = { navController.popBackStack() }
             )
         }
+
 
         composable("tools") {
             ToolsScreen(onBack = { navController.popBackStack() })

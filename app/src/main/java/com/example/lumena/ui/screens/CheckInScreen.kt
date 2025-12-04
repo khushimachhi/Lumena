@@ -7,21 +7,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lumena.data.mood.MoodRepository
-import com.example.lumena.ui.components.MoodSelectorRow
+import com.example.lumena.ui.components.MoodPicker
 import com.example.lumena.viewmodel.CheckInViewModel
 import com.example.lumena.viewmodel.CheckInViewModelFactory
 
 @Composable
 fun CheckInScreen(
-    moodRepo: MoodRepository,
+    viewModel: CheckInViewModel,
     onBack: () -> Unit
 ) {
-    val viewModel: CheckInViewModel = viewModel(
-        factory = CheckInViewModelFactory(moodRepo)
-    )
-
     val uiState by viewModel.uiState.collectAsState()
-
 
     if (uiState.saved) {
         LaunchedEffect(Unit) { onBack() }
@@ -30,43 +25,43 @@ fun CheckInScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Top
+            .padding(24.dp)
     ) {
 
         Text("How was your day?", style = MaterialTheme.typography.headlineSmall)
 
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(16.dp))
 
-        MoodSelectorRow(
-            selectedMood = uiState.mood,
-            onMoodSelected = { viewModel.onMoodChange(it) }
+        MoodPicker(
+            selected = uiState.mood,
+            onSelect = { viewModel.onMoodChange(it) }
         )
 
 
 
+        Spacer(Modifier.height(16.dp))
 
-
-        Spacer(Modifier.height(20.dp))
-
+        // Energy slider
         Text("Energy: ${uiState.energy.toInt()}")
         Slider(
             value = uiState.energy,
             onValueChange = { viewModel.onEnergyChange(it) },
             valueRange = 0f..10f
         )
-        Text("Selected mood = ${uiState.mood}")
-        Spacer(Modifier.height(20.dp))
 
+        Spacer(Modifier.height(16.dp))
+
+        // Optional note
         OutlinedTextField(
-            label = { Text("Add a note (optional)") },
             value = uiState.note,
-            onValueChange = viewModel::onNoteChange,
+            onValueChange = { viewModel.onNoteChange(it) },
+            label = { Text("Add a note (optional)") },
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(30.dp))
+        Spacer(Modifier.height(24.dp))
 
+        // Save button
         Button(
             onClick = { viewModel.saveEntry() },
             enabled = uiState.mood != 0,
@@ -74,5 +69,10 @@ fun CheckInScreen(
         ) {
             Text("Save")
         }
+
+        Spacer(Modifier.height(16.dp))
+
+        Text("DEBUG: mood = ${uiState.mood}")
     }
 }
+
