@@ -24,4 +24,9 @@ class RoomMoodRepository(private val dao: MoodDao) : MoodRepository {
 
     override fun getLatest(limit: Int) =
         dao.getLatest(limit)
+
+    override suspend fun getLastEntries(limit: Int): List<MoodEntry> {
+        return dao.getLastEntries(limit)
+    }
+
 }

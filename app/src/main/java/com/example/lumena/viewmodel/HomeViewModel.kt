@@ -50,7 +50,7 @@ class HomeViewModel(
         }
     }
 
-    /** 🔥 Call this anytime HomeScreen becomes visible */
+//  Call this anytime HomeScreen becomes visible
     fun refreshTodayMood() {
         viewModelScope.launch {
             val entry = moodRepo.getEntryForDate(todayIso)

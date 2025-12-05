@@ -30,4 +30,8 @@ interface MoodDao {
      // Convenience: latest N entries
     @Query("SELECT * FROM mood_entries ORDER BY dateIso DESC LIMIT :limit")
     fun getLatest(limit: Int): Flow<List<MoodEntry>>
+
+    @Query("SELECT * FROM mood_entries ORDER BY dateIso DESC LIMIT :limit")
+    suspend fun getLastEntries(limit: Int): List<MoodEntry>
+
 }
